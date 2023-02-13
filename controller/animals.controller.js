@@ -43,9 +43,38 @@ const createAdoptionOrder = (request, response) => {
   });
 };
 
+const resetAdoptionOrders = (request, response) => { 
+  const db = new sqlite3.Database(filepath, (error) => {
+    if (error) {
+      console.error(error.message);
+    } else {
+      for (let i = 0; i <= 30; i++) {
+        db.all(`UPDATE animals_ong SET inAdoptionProcess = 0 WHERE id = ${i}`, function(error) {
+          if (i == 30) {
+            response.status(201).send({
+              message: "Ordens resetadas!",
+            });            
+          }                
+        });        
+      }
+      
+      for (let i = 0; i <= 15; i++) {
+        db.all(`UPDATE animals_owner SET inAdoptionProcess = 0 WHERE id = ${i}`, function(error) {
+          if (i == 30) {
+            response.status(201).send({
+              message: "Ordens resetadas!",
+            });            
+          }                
+        });        
+      }
+    }
+  });
+};
+
 
 module.exports = {
   getAllAnimalsOng,
   getAllAnimalsOwner,
   createAdoptionOrder,
+  resetAdoptionOrders,
 };
