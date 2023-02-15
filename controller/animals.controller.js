@@ -8,28 +8,12 @@ const getAllAnimalsOng = (request, response) => {
         message: "Erro ao conectar no banco",
       });
     } else {
-      db.all("SELECT * FROM animals_ong", function(err, rows) {
+      db.all("SELECT * FROM animals_ong", function(error, rows) {
         response.status(202).send(rows);         
       });
     }
   });
 };
-
-
-const getAllAnimalsLostFound = (request, response) => {
-  const db = new sqlite3.Database(filepath, (error) => {
-    if (error) {
-      response.status(500).send({
-        message: "Erro ao conectar no banco",
-      });
-    } else {
-      db.all("SELECT * FROM animals_lost_found", function(err, rows) {
-        response.status(202).send(rows);         
-      });
-    }
-  });
-};
-
 
 const getAllAnimalsOwner = (request, response) => {
   const db = new sqlite3.Database(filepath, (error) => {
@@ -45,10 +29,38 @@ const getAllAnimalsOwner = (request, response) => {
   });
 };
 
+const getAllAnimalsLostFound = (request, response) => {
+  const db = new sqlite3.Database(filepath, (error) => {
+    if (error) {
+      response.status(500).send({
+        message: "Erro ao conectar no banco",
+      });
+    } else {
+      db.all("SELECT * FROM animals_lost_found", function(err, rows) {
+        response.status(202).send(rows);         
+      });
+    }
+  });
+};
+
+const getAnimalsFiltered = (request, response) => {
+  const bodyData = request.body;
+  
+  const db = new sqlite3.Database(filepath, (error) => {
+    if (error) {
+      response.status(500).send({
+        message: "Erro ao conectar no banco",
+      });
+    } else {
+      db.all(`SELECT * FROM animals_ong WHERE tag = '${bodyData.type}'`, function(error, rows) {
+        response.status(202).send(rows);              
+      });
+    }
+  });
+};
+
 const createAdoptionOrder = (request, response) => {
   const bodyData = request.body;
-  console.log(bodyData.id)
-  console.log(bodyData.tableName)
   
   const db = new sqlite3.Database(filepath, (error) => {
     if (error) {
@@ -97,6 +109,7 @@ const resetAdoptionOrders = (request, response) => {
 module.exports = {
   getAllAnimalsOng,
   getAllAnimalsOwner,
+  getAnimalsFiltered,
   createAdoptionOrder,
   resetAdoptionOrders,
   getAllAnimalsLostFound,
